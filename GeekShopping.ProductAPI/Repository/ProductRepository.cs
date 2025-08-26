@@ -39,6 +39,8 @@ namespace GeekShopping.ProductAPI.Repository
         public async Task<ProductVO> Update(ProductVO vo)
         {
             var product = _mapper.Map<Model.Product>(vo);
+            var produtoExistente = await _context.Products.AsNoTracking().FirstOrDefaultAsync(p => p.Id == product.Id);
+            if(produtoExistente == null) throw new KeyNotFoundException($"Produto {vo.Id} não encontrado."); ;
             _context.Products.Update(product);
             await _context.SaveChangesAsync();
             return _mapper.Map<ProductVO>(product);
